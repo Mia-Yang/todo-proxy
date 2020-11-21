@@ -1,0 +1,11 @@
+ul {
+    list-style: none;
+}
+
+.finished {
+    opacity: 0.6;
+}
+
+.finished span {
+    text-decoration: line-through;
+}
