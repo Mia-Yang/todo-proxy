@@ -3,21 +3,34 @@ let addBtn = document.querySelector(".add-btn");
 let list = document.querySelector(".todo-list");
 let clear = document.querySelector(".clear");
 
+const arrayHandler = {
+    get: function(target, property) {
+        console.log("get")
+        renderList(target);
+        return target[property];
+    },
+    set: function(target, property, value) {
+        target[property] = value;
+        console.log("catch the change");
+        renderList(target);
+        return true;
+    },
+}
+
 let allList = [];
+let allListProxy = new Proxy(allList, arrayHandler);
 
 const addTodo = (e) => {
     e.preventDefault();
     let itemContent = input.value.trim();
     input.value = "";
     let newTodo = {
-        id: allList.length,
+        id: allListProxy.length,
         text: itemContent,
         completed: false,
     }
     if (itemContent.length !== 0) {
-        allList.push(newTodo);
-        renderList(allList);
-        // 监听数据
+        allListProxy.push(newTodo);
     }
 }
 
@@ -32,9 +45,12 @@ function editContent(id) {
     editInput.focus();
     editInput.onblur = function() {
         if (editInput.value.length) {
-            allList[id].text = editInput.value.trim();
-            renderList(allList);
-            // 监听数据
+            const originalItem = allListProxy[id];
+            allListProxy[id] = {
+                id: originalItem.id,
+                text: editInput.value.trim(),
+                completed: originalItem.completed,
+            }
         } else {
             span.innerHTML = oldText;
         }
@@ -42,26 +58,30 @@ function editContent(id) {
 }
 
 const toggleTodo = (id) => {
-    allList[id].completed = !allList[id].completed;
-    renderList(allList);
-    // 监听数据
+    const originalItem = allListProxy[id];
+    allListProxy[id] = {
+        id: originalItem.id,
+        text: originalItem.text,
+        completed: !originalItem.completed,
+    }
 }
 
 const clearAll = () => {
-    allList = [];
-    renderList(allList);
-    // 监听数据
+    allListProxy.length = 0;
 }
 
 const removeTodo = (id) => {
-    allList.splice(id, 1);
-    allList.forEach((item, index) => {
-        item.id = index;
-    })
-    renderList(allList);
-    // 监听数据
+    console.log(`del ${allListProxy[id].text}`);
+    allListProxy.splice(id, 1);
+    for (let i = 0; i < allListProxy.length; i++) {
+        const originalItem = allListProxy[i];
+        allListProxy[i] = {
+            id: i,
+            text: originalItem.text,
+            completed: originalItem.completed,
+        }
+    }
 }
-
 
 const renderList = (data) => {
     var listHtml = '';
