@@ -1,5 +1,116 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image: linear-gradient( 135deg, #FFF886 10%, #F072B6 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    font-family: "Poppins", sans-serif;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    margin-top: 150px;
+    width: 450px;
+    margin: 150px auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: 70px;
+    color: white;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px wheat;
+}
+
+form {
+    display: flex;
+}
+
+form input,
+.add-btn {
+    font-size: 16px;
+    padding: 15px;
+    border: none;
+    outline: none;
+    margin-bottom: 20px;
+}
+
+form input {
+    width: 100%;
+}
+
+.add-btn {
+    background-color: #FF52E5;
+    color: white;
+    cursor: pointer;
+}
+
+.add-btn:hover {
+    color: #FF52E5;
+    background-color: white;
+}
+
+.clear {
+    color: white;
+    font-size: 14px;
+}
+
+.clear {
+    width: 70px;
+    background-color: transparent;
+    border: 1px solid white;
+    outline: none;
+    cursor: pointer;
+}
+
+.clear:active {
+    background-color: white;
+    opacity: 0.7;
+    color: black;
+}
+
+span {
+    font-size: 16px;
+    flex-grow: 1;
+    margin-left: 10px;
+    overflow: scroll;
+}
+
+span input[type="text"] {
+    height: 25px;
+    font-size: 16px;
+}
+
 ul {
     list-style: none;
+}
+
+ul li {
+    display: flex;
+    width: 100%;
+    margin: 10px 0;
+    padding-left: 15px;
+    background-color: white;
+    align-items: center;
+}
+
+.del {
+    padding: 15px;
+    color: white;
+    background-color: #FF52E5;
+    border: none;
+    cursor: pointer;
+}
+
+.del:hover {
+    color: #FF52E5;
+    background-color: white;
 }
 
 .finished {
@@ -8,4 +119,14 @@ ul {
 
 .finished span {
     text-decoration: line-through;
+}
+
+input[type="checkbox"] {
+    zoom: 1.5;
+    cursor: pointer;
+}
+
+button {
+    width: 45px;
+    outline: none;
 }

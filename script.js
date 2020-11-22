@@ -3,10 +3,23 @@ let addBtn = document.querySelector(".add-btn");
 let list = document.querySelector(".todo-list");
 let clear = document.querySelector(".clear");
 
+const renderList = (data) => {
+    var listHtml = '';
+    data.forEach((item) => {
+        let checkedOrNot = item.completed ? "checked" : "";
+        let checkedStyle = item.completed ? 'class="finished"' : '';
+        listHtml +=
+            `<li ${checkedStyle}>
+            <input type="checkbox" onclick="toggleTodo(${item.id})" ${checkedOrNot}> 
+            <span onclick="editContent(${item.id})" id="text-${item.id}"> ${item.text} </span>
+            <button onclick="removeTodo(${item.id})" class="del">✖️</button>
+            </li>`;
+    })
+    list.innerHTML = listHtml;
+}
+
 const arrayHandler = {
     get: function(target, property) {
-        console.log("get")
-        renderList(target);
         return target[property];
     },
     set: function(target, property, value) {
@@ -81,21 +94,6 @@ const removeTodo = (id) => {
             completed: originalItem.completed,
         }
     }
-}
-
-const renderList = (data) => {
-    var listHtml = '';
-    data.forEach((item) => {
-        let checkedOrNot = item.completed ? "checked" : "";
-        let checkedStyle = item.completed ? 'class="finished"' : '';
-        listHtml +=
-            `<li ${checkedStyle}>
-            <input type="checkbox" onclick="toggleTodo(${item.id})" ${checkedOrNot}> 
-            <span onclick="editContent(${item.id})" id="text-${item.id}"> ${item.text} </span>
-            <button onclick="removeTodo(${item.id})" class="del">✖️</button>
-            </li>`;
-    })
-    list.innerHTML = listHtml;
 }
 
 addBtn.addEventListener('click', addTodo);
