@@ -1,21 +1,34 @@
-let input = document.querySelector(".inputbox");
-let addBtn = document.querySelector(".add-btn");
-let list = document.querySelector(".todo-list");
-let clear = document.querySelector(".clear");
+const saveData = (key, value) => {
+    localStorage.setItem(key, JSON.stringify(value));
+}
 
+const getData = (key) => {
+    if (localStorage.getItem(key) !== null) {
+        allList = JSON.parse(localStorage.getItem(key));
+    } else {
+        allList = [];
+    }
+    return allList;
+}
+
+const removeData = (key) => {
+    localStorage.removeItem(key);
+}
+
+let todoList = document.querySelector(".todo-list");
 const renderList = (data) => {
-    var listHtml = '';
+    let listHtml = '';
     data.forEach((item) => {
-        let checkedOrNot = item.completed ? "checked" : "";
+        let isChecked = item.completed ? "checked" : "";
         let checkedStyle = item.completed ? 'class="finished"' : '';
         listHtml +=
             `<li ${checkedStyle}>
-            <input type="checkbox" onclick="toggleTodo(${item.id})" ${checkedOrNot}> 
+            <input type="checkbox" onclick="toggleTodo(${item.id})" ${isChecked}> 
             <span onclick="editContent(${item.id})" id="text-${item.id}"> ${item.text} </span>
             <button onclick="removeTodo(${item.id})" class="del">✖️</button>
             </li>`;
     })
-    list.innerHTML = listHtml;
+    todoList.innerHTML = listHtml;
 }
 
 const arrayHandler = {
@@ -23,22 +36,32 @@ const arrayHandler = {
         return target[property];
     },
     set: function(target, property, value) {
+        console.log(property, "---------")
+        console.log(value);
         target[property] = value;
-        console.log("catch the change");
-        renderList(target);
+        removeData("allList");
+        saveData("allList", target)
+        renderList(getData("allList"));
         return true;
     },
+
+    // deleteProperty: function(target, property) {
+    //     delete target[property];
+    //     return true;
+    // }
 }
 
 let allList = [];
 let allListProxy = new Proxy(allList, arrayHandler);
+
+let input = document.querySelector(".inputbox");
 
 const addTodo = (e) => {
     e.preventDefault();
     let itemContent = input.value.trim();
     input.value = "";
     let newTodo = {
-        id: allListProxy.length,
+        id: Date.now(),
         text: itemContent,
         completed: false,
     }
@@ -47,34 +70,38 @@ const addTodo = (e) => {
     }
 }
 
+function getIndex(arr, value) {
+    return arr.findIndex(item => item.id === value);
+}
+
 function editContent(id) {
-    const span = document.getElementById("text-" + id);
-    const oldText = span.innerHTML;
-    span.innerHTML = "";
+    const textContainer = document.getElementById("text-" + id);
+    const oldText = textContainer.innerHTML;
+    textContainer.innerHTML = "";
     let editInput = document.createElement("input");
     editInput.setAttribute("type", "text");
     editInput.setAttribute("id", "editInput-" + id);
-    span.appendChild(editInput);
+    textContainer.appendChild(editInput);
     editInput.focus();
     editInput.onblur = function() {
         if (editInput.value.length) {
-            const originalItem = allListProxy[id];
-            allListProxy[id] = {
-                id: originalItem.id,
+            const index = getIndex(allListProxy, id);
+            const originalItem = allListProxy[index];
+            allListProxy[index] = {
+                ...originalItem,
                 text: editInput.value.trim(),
-                completed: originalItem.completed,
             }
         } else {
-            span.innerHTML = oldText;
+            textContainer.innerHTML = oldText;
         }
     }
 }
 
 const toggleTodo = (id) => {
-    const originalItem = allListProxy[id];
-    allListProxy[id] = {
-        id: originalItem.id,
-        text: originalItem.text,
+    const index = getIndex(allListProxy, id);
+    const originalItem = allListProxy[index];
+    allListProxy[index] = {
+        ...originalItem,
         completed: !originalItem.completed,
     }
 }
@@ -84,17 +111,15 @@ const clearAll = () => {
 }
 
 const removeTodo = (id) => {
-    console.log(`del ${allListProxy[id].text}`);
-    allListProxy.splice(id, 1);
-    for (let i = 0; i < allListProxy.length; i++) {
-        const originalItem = allListProxy[i];
-        allListProxy[i] = {
-            id: i,
-            text: originalItem.text,
-            completed: originalItem.completed,
-        }
-    }
+    const index = getIndex(allListProxy, id);
+    allListProxy.splice(index, 1);
+    // delete allListProxy[index];
 }
 
+let addBtn = document.querySelector(".add-btn");
 addBtn.addEventListener('click', addTodo);
+
+let clear = document.querySelector(".clear");
 clear.addEventListener('click', clearAll);
+
+window.addEventListener("load", renderList(getData("allList")));
