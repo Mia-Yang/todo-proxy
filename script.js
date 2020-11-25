@@ -1,8 +1,8 @@
-const saveData = (key, value) => {
+const saveDataToLocalStorage = (key, value) => {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
-const getData = (key) => {
+const getDataFromLocalStorage = (key) => {
     if (localStorage.getItem(key) !== null) {
         allList = JSON.parse(localStorage.getItem(key));
     } else {
@@ -11,7 +11,7 @@ const getData = (key) => {
     return allList;
 }
 
-const removeData = (key) => {
+const removeDataFromLocalStorage = (key) => {
     localStorage.removeItem(key);
 }
 
@@ -39,16 +39,11 @@ const arrayHandler = {
         console.log(property, "---------")
         console.log(value);
         target[property] = value;
-        removeData("allList");
-        saveData("allList", target)
-        renderList(getData("allList"));
+        removeDataFromLocalStorage("allList");
+        saveDataToLocalStorage("allList", target)
+        renderList(getDataFromLocalStorage("allList"));
         return true;
     },
-
-    // deleteProperty: function(target, property) {
-    //     delete target[property];
-    //     return true;
-    // }
 }
 
 let allList = [];
@@ -122,4 +117,4 @@ addBtn.addEventListener('click', addTodo);
 let clear = document.querySelector(".clear");
 clear.addEventListener('click', clearAll);
 
-window.addEventListener("load", renderList(getData("allList")));
+window.addEventListener("load", renderList(getDataFromLocalStorage("allList")));
