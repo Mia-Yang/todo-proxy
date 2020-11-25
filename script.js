@@ -24,7 +24,7 @@ const renderList = (data) => {
         listHtml +=
             `<li ${checkedStyle}>
             <input type="checkbox" onclick="toggleTodo(${item.id})" ${isChecked}> 
-            <span onclick="editContent(${item.id})" id="text-${item.id}"> ${item.text} </span>
+            <span id="text-${item.id}"  onfocus="editContent(${item.id})" class="single-line" contenteditable > ${item.text} </span>
             <button onclick="removeTodo(${item.id})" class="del">✖️</button>
             </li>`;
     })
@@ -70,26 +70,21 @@ function getIndex(arr, value) {
 }
 
 function editContent(id) {
-    const textContainer = document.getElementById("text-" + id);
-    const oldText = textContainer.innerHTML;
-    textContainer.innerHTML = "";
-    let editInput = document.createElement("input");
-    editInput.setAttribute("type", "text");
-    editInput.setAttribute("id", "editInput-" + id);
-    textContainer.appendChild(editInput);
-    editInput.focus();
-    editInput.onblur = function() {
-        if (editInput.value.length) {
+    const textSpan = document.getElementById("text-" + id);
+    const originalText = textSpan.innerText;
+    textSpan.addEventListener('blur', function() {
+        const newText = textSpan.innerText
+        if (newText.trim().length) {
             const index = getIndex(allListProxy, id);
             const originalItem = allListProxy[index];
             allListProxy[index] = {
                 ...originalItem,
-                text: editInput.value.trim(),
+                text: newText.trim(),
             }
         } else {
-            textContainer.innerHTML = oldText;
+            textSpan.innerText = originalText;
         }
-    }
+    })
 }
 
 const toggleTodo = (id) => {
