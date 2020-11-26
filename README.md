@@ -7,5 +7,5 @@ You can add, mark, delete items on it.
 open index.html
 
 ## Desciption
-Use proxy to intercept operations on data.
+Use **proxy** to intercept operations on data.
 
